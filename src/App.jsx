@@ -14,6 +14,8 @@ const initialForm = {
   status: 'Active',
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || '/api'
+
 function App() {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -21,7 +23,7 @@ function App() {
   const [formData, setFormData] = useState(initialForm)
   const [editing, setEditing] = useState(null)
 
-  const api = (path, opts) => fetch(path, opts).then((r) => r.json())
+  const api = (path, opts) => fetch(`${API_BASE}${path}`, opts).then((r) => r.json())
 
   const loadMembers = async () => {
     setLoading(true)
@@ -47,13 +49,13 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (editing) {
-      await fetch(`/api/members/${editing._id || editing.id}`, {
+      await fetch(`${API_BASE}/members/${editing._id || editing.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
     } else {
-      await fetch('/api/members', {
+      await fetch(`${API_BASE}/members`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -81,7 +83,7 @@ function App() {
 
   const handleDelete = async (member) => {
     if (!confirm('Delete this member?')) return
-    await fetch(`/api/members/${member._id || member.id}`, { method: 'DELETE' })
+    await fetch(`${API_BASE}/members/${member._id || member.id}`, { method: 'DELETE' })
     loadMembers()
   }
 
